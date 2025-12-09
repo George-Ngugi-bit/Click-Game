@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample HTML Page</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inconsolata', sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            user-select: none;
+        }
+
+        #game-area {
+            width: 300px;
+            height: 300px;
+            border: 3px solid black;
+            border-radius: 5px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        #box {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 1rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+
+        #start-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .liquid-btn {
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(270deg, #ff6ec4, #7873f5, #4ade80, #facc15);
+            background-size: 800% 800%;
+            animation: liquidBG 8s ease infinite;
+            transition: transform 0.2s;
+        }
+
+        .liquid-btn:hover {
+            transform: scale(1.05);
+        }   
+
+        @keyframes liquidBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1> Click the box </h1>
+    <p> Click the box </p>
+
+    <button id="start-btn" class="liquid-btn"> Start Game </button>
+
+    <h2> Score: <span id="score">0</span></h2>
+    <h2>Time Left: <span id="time">10</span></h2>
+
+    <div id="game-area">
+        <div id="box"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 10;
+        let timer;
+        let gamerunning = false;
+
+        const box = document.getElementById('box');
+        const scoreDisplay = document.getElementById('score');
+        const timeDisplay = document.getElementById('time');
+        const startBtn = document.getElementById('start-btn');
+        const gameArea = document.getElementById('game-area');
+
+        function moveBox() {
+            const maxX = gameArea.clientWidth - box.clientWidth;
+            const maxY = gameArea.clientHeight - box.clientHeight;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            box.style.left = randomX + 'px';
+            box.style.top = randomY + 'px';
+        }
+        
+        box.addEventListener('click', () => {
+            if (!gamerunning) return;
+            score++;
+            scoreDisplay.textContent = score;
+            moveBox();
+        });
+
+        startBtn.addEventListener('click', () => {
+            if (gamerunning) return;
+
+            gamerunning = true;
+            score = 0;
+            timeLeft = 10;
+            scoreDisplay.textContent = score;
+            timeDisplay.textContent = timeLeft;
+
+            gamerunning = true;
+
+            moveBox();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timeDisplay.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    gamerunning = false;
+                    alert('Game Over! Your score is: ' + score);
+                }
+            }, 1000);
+        });
+
+    </script>
+</body>
+
+</html>

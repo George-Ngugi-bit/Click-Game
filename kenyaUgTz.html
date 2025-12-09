@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Science+Gothic:wght@100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: "Science Gothic", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f3f3f3;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(6, 60px);
+            gap: 5px;
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            background: #ffd700;
+            user-select: none;
+        }
+
+        .tile.selected {
+            border: 3px solid red;
+        }
+
+        #instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .tile:hover {
+            cursor: pointer;
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- instructions -->
+    <div id="instructions">
+        <strong>
+            How to Play
+        </strong><br
+        1. Click a tile, then click an adjacent tile to swap them. <br>
+        2. Match 3 or more same fruits horizontally or vertically to score points.<br>
+        3. Keep matching to increase your score!<br>
+        4. Matched tiles disappear and new ones appear.<br>
+        5. Score points for each match!
+
+    </div>
+
+    <h1> KenyaUgTz Game </h1>
+    <div id="grid"></div>
+    <p>Score: <span id="score">0</span></p>
+    <script>
+        const colors = ["🍎", "🍌", "🍇", "🍉", "🍓"];
+        const gridSize = 6;
+        let grid = [];
+        let firstTile = null;
+        let score = 0;
+
+        const gridEl = document.getElementById("grid");
+        const scoreEl = document.getElementById("score");
+
+        function createGrid() {
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const tile = document.createElement("div");
+                tile.classList.add("tile");
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                tile.textContent = color;
+                tile.dataset.index = i;
+                tile.addEventListener("click", handleClick);
+                gridEl.appendChild(tile);
+                grid.push(tile);
+            }
+        }
+
+        function handleClick(e) {
+            const tile = e.currentTarget;
+            if (firstTile === null) {
+                firstTile = tile;
+                tile.classList.add("selected");
+            } else {
+                swapTiles(firstTile, tile);
+                firstTile.classList.remove("selected");
+                firstTile = null;
+                setTimeout(checkMatches, 300);
+            }
+        }
+
+        function swapTiles(tile1, tile2) {
+            const temp = tile1.textContent;
+            tile1.textContent = tile2.textContent;
+            tile2.textContent = temp;
+        }
+
+        function checkMatches() {
+            let matched = false;
+
+            // Check rows
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize - 2; c++) {
+                    const idx = row * gridSize + col;
+                    if (grid[idx].textContent === grid[idx + 1].textContent && grid[idx].textContent === grid[idx + 2].textContent) {
+                        grid[idx].textContent = randomColor();
+                        grid[idx + 1].textContent = randomColor();
+                        grid[idx + 2].textContent = randomColor();
+                        score += 3;
+                        matched = true;
+                    }
+                }
+            }
+
+            for (let col = 0; col < gridSize; col++) {
+                for (let row = 0; row < gridSize - 2; row++) {
+                    const idx = row * gridSize + col;
+                    if (grid[idx].textContent === grid[idx + gridSize].textContent && grid[idx].textContent === grid[idx + 2 * gridSize].textContent) {
+                        grid[idx].textContent = randomColor();
+                        grid[idx + gridSize].textContent = randomColor();
+                        grid[idx + 2 * gridSize].textContent = randomColor();
+                        score += 3;
+                        matched = true;
+                    }
+                }
+            }
+            scoreEl.textContent = score;
+            if (matched) {
+                setTimeout(checkMatches, 200);
+            }
+        }
+
+        function randomColor() {
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        createGrid();
+
+    </script>
+</body>
+
+</html>
